@@ -1,7 +1,7 @@
 public class ArrayDeque<T> {
-    int first;
-    int last;
-    T[] items;
+    private int first;
+    private int last;
+    private T[] items;
 
     public ArrayDeque() {
         items = (T[]) new Object[8];
@@ -29,19 +29,20 @@ public class ArrayDeque<T> {
         return (last - first + items.length) % items.length;
     }
 
-    public void reCapacity() {
+    private void reCapacity() {
         T[] newItems = (T[]) new Object[items.length * 2];
         for (int i = 0; i < size(); i++) {
             newItems[i] = items[(first + i) % items.length];
         }
         first = 0;
-        last = items.length;
+        last = size();
         items = newItems;
     }
 
     public T removeFirst() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         T temp = items[first];
         items[first] = null;
         first = ++first % items.length;
@@ -52,8 +53,9 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
-        if (isEmpty())
+        if (isEmpty()) {
             return null;
+        }
         last = (last - 1 + items.length) % items.length;
         T temp = items[last];
         items[last] = null;
@@ -67,20 +69,21 @@ public class ArrayDeque<T> {
         return first == last;
     }
 
-    public void minusCapacity() {
+    private void minusCapacity() {
         int newCapacity = (int) (items.length * 0.25);
         T[] newItems = (T[]) new Object[newCapacity];
         for (int i = 0; i < size(); i++) {
             newItems[i] = items[(first + i) % items.length];
         }
         first = 0;
-        last = items.length;
+        last = size();
         items = newItems;
     }
 
     public T get(int index) {
-        if (index >= size())
+        if (index >= size()) {
             return null;
+        }
         return items[(first + index) % items.length];
     }
 
@@ -90,5 +93,14 @@ public class ArrayDeque<T> {
             System.out.print(" ");
         }
     }
+
+    /*public static void main(String[] args) {
+        ArrayDeque<Integer> integerArrayDeque = new ArrayDeque<>();
+        int n = 100;
+        for (int i = 0; i < n; i++) {
+            integerArrayDeque.addLast(i);
+        }
+        System.out.println(integerArrayDeque.get(0));
+    }*/
 
 }
