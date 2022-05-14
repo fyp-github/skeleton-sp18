@@ -34,8 +34,9 @@ public class ArrayDeque<T> {
         for (int i = 0; i < size(); i++) {
             newItems[i] = items[(first + i) % items.length];
         }
+        int size = size();
         first = 0;
-        last = size();
+        last = size;
         items = newItems;
     }
 
@@ -75,8 +76,9 @@ public class ArrayDeque<T> {
         for (int i = 0; i < size(); i++) {
             newItems[i] = items[(first + i) % items.length];
         }
+        int size = size();
         first = 0;
-        last = size();
+        last = size;
         items = newItems;
     }
 
@@ -95,12 +97,23 @@ public class ArrayDeque<T> {
     }
 
     /*public static void main(String[] args) {
-        ArrayDeque<Integer> integerArrayDeque = new ArrayDeque<>();
-        int n = 100;
-        for (int i = 0; i < n; i++) {
-            integerArrayDeque.addLast(i);
-        }
-        System.out.println(integerArrayDeque.get(0));
+        ArrayDeque<Integer> ArrayDeque = new ArrayDeque<>();
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(0);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addLast(1);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(2);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(3);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(4);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(5);
+        System.out.println(ArrayDeque.size());
+        ArrayDeque.addFirst(7);
+        ArrayDeque.addLast(8);
+        System.out.println(ArrayDeque.size());
     }*/
 
 }
