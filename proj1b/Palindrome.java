@@ -25,4 +25,19 @@ public class Palindrome {
         }
         return true;
     }
+
+    public boolean isPalindrome(String word, CharacterComparator cc) {
+        Deque<Character> deque = wordToDeque(word);
+        return isPalindromeRecur(deque, cc);
+    }
+
+    private boolean isPalindromeRecur(Deque deque, CharacterComparator cc) {
+        if(deque.size() <= 1) {
+            return true;
+        }
+        if (!cc.equalChars((Character) deque.removeFirst(), (Character) deque.removeLast())) {
+            return false;
+        }
+        return isPalindromeRecur(deque, cc);
+    }
 }
