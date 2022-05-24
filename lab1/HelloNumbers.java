@@ -7,5 +7,7 @@ public class HelloNumbers {
             System.out.print(sum + " ");
             x = x + 1;
         }
+        String a = "sdasd";
+        System.out.println(a);
     }
 }
