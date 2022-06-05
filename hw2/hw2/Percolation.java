@@ -34,9 +34,7 @@ public class Percolation {
     }
     // open the site (row, col) if it is not open already
     public void open(int row, int col) {
-        if(!checkRolAndCol(row, col)) {
-            throw new IllegalArgumentException();
-        }
+        checkRolAndCol(row, col);
         if (isOpen(row, col)) {
             return;
         }
@@ -88,16 +86,12 @@ public class Percolation {
     }
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        if(!checkRolAndCol(row, col)) {
-            throw new IllegalArgumentException();
-        }
+        checkRolAndCol(row, col);
         return status[weightedQuickUnionUF.find(indexMap(row, col))] > 0;
     }
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        if(!checkRolAndCol(row, col)) {
-            throw new IllegalArgumentException();
-        }
+        checkRolAndCol(row, col);
         return status[weightedQuickUnionUF.find(indexMap(row, col))] == 2;
     }
     // number of open sites
@@ -111,8 +105,10 @@ public class Percolation {
     private int indexMap(int row, int col) {
         return row * N + col;
     }
-    private boolean checkRolAndCol(int row, int col) {
-        return row >= 0 && col >= 0 && row <= N - 1 && col <= N - 1;
+    private void checkRolAndCol(int row, int col) {
+        if(row < 0 || col < 0 || row > N - 1 || col > N - 1) {
+            throw new IndexOutOfBoundsException();
+        }
     }
     private void handleUnion(int siteThis, int rootOther) {
         int root = weightedQuickUnionUF.find(siteThis);
