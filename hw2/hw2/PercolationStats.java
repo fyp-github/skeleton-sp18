@@ -9,6 +9,9 @@ public class PercolationStats {
     private double[] x;
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T, PercolationFactory pf) {
+        if (N <= 0 || T <= 0) {
+            throw new IllegalArgumentException();
+        }
         this.N = N;
         this.T = T;
         this.x = new double[T];

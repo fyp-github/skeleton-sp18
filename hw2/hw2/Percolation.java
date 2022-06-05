@@ -29,12 +29,14 @@ public class Percolation {
                 bottom[indexMap(i, j)] = i;
             }
         }
-        globalFullBottom  = 0;
+        globalFullBottom  = -1;
         weightedQuickUnionUF = new WeightedQuickUnionUF(N * N);
     }
     // open the site (row, col) if it is not open already
     public void open(int row, int col) {
-        checkRolAndCol(row, col);
+        if(!checkRolAndCol(row, col)) {
+            throw new IllegalArgumentException();
+        }
         if (isOpen(row, col)) {
             return;
         }
@@ -42,34 +44,20 @@ public class Percolation {
         if (row == 0) {
             //grid[row][col] = 2;
             status[siteThis] = 2;
-            openSitesNum++;
+            if (globalFullBottom < 0) {
+                globalFullBottom = 0;
+            }
         }
         else {
             // grid[row][col] = 1;
             status[siteThis] = 1;
-            openSitesNum++;
         }
+        openSitesNum++;
         if (row > 0) {
             if (isOpen(row - 1, col)) {
                 if (!weightedQuickUnionUF.connected(indexMap(row - 1, col), indexMap(row, col))) {
                     int rootOther = weightedQuickUnionUF.find(indexMap(row - 1, col));
                     handleUnion(siteThis, rootOther);
-                    /*if (status[root] < status[rootOther]) {
-                        status[root] = status[rootOther];
-                    }
-                    else {
-                        status[rootOther] = status[root];
-                    }
-                    if (fullBottom[root] < fullBottom[rootOther]) {
-                        fullBottom[root] = fullBottom[rootOther];
-                    }
-                    else {
-                        fullBottom[rootOther] = fullBottom[root];
-                    }
-                    weightedQuickUnionUF.union(indexMap(row - 1, col), indexMap(row, col));
-                    if (fullBottom[root] > globalFullBottom) {
-                        globalFullBottom = fullBottom[root];
-                    }*/
                 }
             }
         }
@@ -100,12 +88,16 @@ public class Percolation {
     }
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        checkRolAndCol(row, col);
+        if(!checkRolAndCol(row, col)) {
+            throw new IllegalArgumentException();
+        }
         return status[weightedQuickUnionUF.find(indexMap(row, col))] > 0;
     }
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        checkRolAndCol(row, col);
+        if(!checkRolAndCol(row, col)) {
+            throw new IllegalArgumentException();
+        }
         return status[weightedQuickUnionUF.find(indexMap(row, col))] == 2;
     }
     // number of open sites
@@ -119,10 +111,8 @@ public class Percolation {
     private int indexMap(int row, int col) {
         return row * N + col;
     }
-    private void checkRolAndCol(int row, int col) {
-        if (row < 0 || col < 0 || row > N - 1 || col > N -1) {
-            throw new IllegalArgumentException();
-        }
+    private boolean checkRolAndCol(int row, int col) {
+        return row >= 0 && col >= 0 && row <= N - 1 && col <= N - 1;
     }
     private void handleUnion(int siteThis, int rootOther) {
         int root = weightedQuickUnionUF.find(siteThis);
