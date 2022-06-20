@@ -112,7 +112,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     private void resize(int capacity) {
-        ArrayMap<K, V>[] newBuckets = new ArrayMap<>[capacity];
+        ArrayMap<K, V>[] newBuckets = new ArrayMap[capacity];
         System.arraycopy(buckets, 0, newBuckets, 0, buckets.length);
         buckets = newBuckets;
     }
