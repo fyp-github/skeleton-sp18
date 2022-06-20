@@ -1,14 +1,16 @@
 package lab9;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Implementation of interface Map61B with BST as core data structure.
  *
  * @author Your name here
  */
-public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterable<K> {
 
     private class Node {
         /* (K, V) pair stored in this Node. */
@@ -44,7 +46,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      *  or null if this map contains no mapping for the key.
      */
     private V getHelper(K key, Node p) {
-        throw new UnsupportedOperationException();
+        if (p == null) {
+            return null;
+        }
+        if (key.compareTo(p.key) == 0) {
+            return p.value;
+        }
+        else if (key.compareTo(p.key) < 0) {
+            return getHelper(key, p.left);
+        }
+        else {
+            return getHelper(key, p.right);
+        }
     }
 
     /** Returns the value to which the specified key is mapped, or null if this
@@ -52,14 +65,27 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        return getHelper(key, root);
     }
 
     /** Returns a BSTMap rooted in p with (KEY, VALUE) added as a key-value mapping.
       * Or if p is null, it returns a one node BSTMap containing (KEY, VALUE).
      */
     private Node putHelper(K key, V value, Node p) {
-        throw new UnsupportedOperationException();
+        if (p == null) {
+            return new Node(key, value);
+        }
+        int compare = key.compareTo(p.key);
+        if (compare == 0) {
+            p.value = value;
+            return p;
+        } else if (compare < 0) {
+            p.left = putHelper(key, value, p.left);
+            return p;
+        } else {
+            p.right = putHelper(key, value, p.right);
+            return p;
+        }
     }
 
     /** Inserts the key KEY
@@ -67,13 +93,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        root = putHelper(key, value, root);
+        size += 1;
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
@@ -81,7 +108,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        HashSet<K> ks = new HashSet<>();
+        keySetHelper(root, ks);
+        return ks;
     }
 
     /** Removes KEY from the tree if present
@@ -90,7 +119,42 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        V removeVal = get(key);
+        root = removeHelper(key, root);
+        if (removeVal != null) {
+            size -= 1;
+        }
+        return removeVal;
+    }
+
+    private Node removeHelper(K key, Node p) {
+        if (p == null) {
+            return null;
+        }
+        int compare = key.compareTo(p.key);
+        if (compare == 0) {
+            if (p.left == null && p.right == null) {
+                return null;
+            } else if (p.right == null) {
+                Node predecessor = findPredecessor(p);
+                p.key = predecessor.key;
+                p.value = predecessor.value;
+                p.left = removeHelper(predecessor.key, p.left);
+                return p;
+            } else {
+                Node successor = findSuccessor(p);
+                p.key = successor.key;
+                p.value = successor.value;
+                p.right = removeHelper(successor.key, p.right);
+                return p;
+            }
+        } else if (compare < 0) {
+            p.left = removeHelper(key, p.left);
+            return p;
+        } else {
+            p.right = removeHelper(key, p.right);
+            return p;
+        }
     }
 
     /** Removes the key-value entry for the specified key only if it is
@@ -99,11 +163,94 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        V removeVal = get(key);
+        if (removeVal == null) {
+            return null;
+        }
+        if (removeVal.equals(value)) {
+            return remove(key);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new myBSTMapIterator();
+    }
+
+    private class myBSTMapIterator implements Iterator<K> {
+        private List<K> tempList;
+        private int p;
+
+        public myBSTMapIterator() {
+            this.tempList = new ArrayList<>();
+            this.p = 0;
+            inorder(root);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return p < tempList.size();
+        }
+
+        @Override
+        public K next() {
+            K key = tempList.get(p);
+            p++;
+            return key;
+        }
+
+        private void inorder(Node root) {
+            if (root == null) {
+                return;
+            }
+            inorder(root.left);
+            tempList.add(root.key);
+            inorder(root.right);
+        }
+    }
+
+    private void keySetHelper(Node p, Set<K> keys) {
+        if (p == null) {
+            return;
+        }
+        keys.add(p.key);
+        keySetHelper(p.left, keys);
+        keySetHelper(p.right, keys);
+    }
+
+    private Node findSuccessor(Node p) {
+        p = p.right;
+        while (p.left != null) {
+            p = p.left;
+        }
+        return p;
+    }
+
+    private Node findPredecessor(Node p) {
+        p = p.left;
+        while (p.right != null) {
+            p = p.right;
+        }
+        return p;
+    }
+
+    public static void main(String[] args) {
+        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
+        System.out.println((b.containsKey("waterYouDoingHere")));
+        b.put("waterYouDoingHere", 0);
+        System.out.println((b.containsKey("waterYouDoingHere")));
+        b.put("a", 1);
+        b.put("b", 2);
+        b.put("c", 3);
+        b.put("d", 4);
+        b.put("e", 5);
+        System.out.println(b.keySet());
+        System.out.println(b.remove("a", 1));
+        System.out.println(b.keySet());
+        for (String s : b) {
+            System.out.println(s);
+        }
     }
 }
