@@ -63,7 +63,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public void put(K key, V value) {
         int hash = hash(key);
-        if (!buckets[hash].containsKey(key)) {
+        if (buckets[hash] == null || !buckets[hash].containsKey(key)) {
             size += 1;
             if (loadFactor() > MAX_LF) {
                 resize(buckets.length * 2);
