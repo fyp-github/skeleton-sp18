@@ -69,7 +69,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
                 resize(buckets.length * 2);
             }
         }
-        buckets[hash].put(key, value);
+        if (buckets[hash] == null) {
+            buckets[hash] = new ArrayMap<>();
+            buckets[hash].put(key, value);
+        }
     }
 
     /* Returns the number of key-value mappings in this map. */
