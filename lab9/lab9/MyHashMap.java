@@ -44,7 +44,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         if (key == null) {
             return 0;
         }
-
         int numBuckets = buckets.length;
         return Math.floorMod(key.hashCode(), numBuckets);
     }
@@ -67,12 +66,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             size += 1;
             if (loadFactor() > MAX_LF) {
                 resize(buckets.length * 2);
+                hash = hash(key);
             }
         }
-        if (buckets[hash] == null) {
-            buckets[hash] = new ArrayMap<>();
-            buckets[hash].put(key, value);
-        }
+        buckets[hash].put(key, value);
     }
 
     /* Returns the number of key-value mappings in this map. */
@@ -116,7 +113,25 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     private void resize(int capacity) {
         ArrayMap<K, V>[] newBuckets = new ArrayMap[capacity];
+        for (int i = 0; i < newBuckets.length; i += 1) {
+            newBuckets[i] = new ArrayMap<>();
+        }
         System.arraycopy(buckets, 0, newBuckets, 0, buckets.length);
         buckets = newBuckets;
+    }
+
+    public static void main(String[] args) {
+        MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
+        System.out.println((b.containsKey("waterYouDoingHere")));
+        b.put("waterYouDoingHere", 0);
+        System.out.println((b.containsKey("waterYouDoingHere")));
+        b.put("a", 1);
+        b.put("b", 2);
+        b.put("c", 3);
+        b.put("d", 4);
+        b.put("e", 5);
+        System.out.println(b.keySet());
+        System.out.println(b.remove("a", 1));
+        System.out.println(b.keySet());
     }
 }
